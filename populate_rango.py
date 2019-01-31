@@ -1,6 +1,6 @@
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
-                      'tango_with_django_project.setting')
+                      'tango_with_django_project.settings')
 
 import django
 django.setup()
@@ -17,7 +17,7 @@ def populate():
 
     django_pages = [
         {"title": "Official Django Tutorial",
-         "url": :"https://docs.djangoproject.com/en/1.9/intro/tutorial01/"},
+         "url": "https://docs.djangoproject.com/en/1.9/intro/tutorial01/"},
         {"title": "Django Rocks",
          "url": "http://www.djangorocks.com/"},
         {"title": "How to Tango with Django",
@@ -25,7 +25,7 @@ def populate():
 
     other_pages = [
         {"title": "Bottle",
-         "url": :"http://bottlepy.org/docs/dev/"},
+         "url": "http://bottlepy.org/docs/dev/"},
         {"title": "Flask",
          "url": "http://flask.pocoo.org"} ]
 
