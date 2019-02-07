@@ -12,4 +12,3 @@ class CategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Category)
 admin.site.register(Page, PageAdmin)
-
