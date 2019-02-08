@@ -1,21 +1,21 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from rango.models import Category
-from rango.models import Page
-from rango.forms import CategoryForm
-from rango.forms import PageForm
-from rango.forms import UserForm
-from rango.forms import UserProfileForm
+from rango.models import Category, Page
+from rango.forms import PageForm, UserForm, UserProfileForm, CategoryForm
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 
 def index(request):
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
     context_dict = {'categories': category_list,
-                    'pages' : page_list}
-    return render(request, 'rango/index.html', context_dict)
+                    'pages' : page_list,
+                    'visits': request.COOKIES.get('visitors', '1')}
+    response = render(request, 'rango/index.html', context_dict)
+    visitor_cookie_handler(request, response)
+    return response
 
 def about(request):
     print(request.method)
@@ -65,7 +65,7 @@ def add_page(request, category_name_slug):
                 page.category = category
                 page.views = 0
                 page.save()
-                return show_category(request, category_name_slug)
+            return show_category(request, category_name_slug)
     else:
         print(form.errors)
 
@@ -137,3 +137,19 @@ def user_logout(request):
 @login_required
 def restricted(request):
     return render(request, 'rango/restricted.html')
+
+
+def visitor_cookie_handler(request, response):
+    visits = int(request.COOKIES.get('visitors', '1'))
+
+    last_visit_cookie = request.COOKIES.get('last_visit', str(datetime.now()))
+    last_visit_time = datetime.strptime(last_visit_cookie[:-7],
+                                        '%Y-%m-%d %H:%M:%S')
+
+    if (datetime.now() - last_visit_time).days < 0:
+        visits += 1
+        response.set_cookie('last_visit', str(datetime.now()))
+    else:
+        response.set_cookie('last_visit', last_visit_cookie)
+
+    response.set_cookie('visits', visits)
